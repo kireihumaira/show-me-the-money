@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".LoginActivity"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="198dp"
+            android:layout_height="226dp"
+            app:srcCompat="@drawable/logo_smtm" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/SMTM"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show Me The Money"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/pink"/>
+
+        <EditText
+            android:id="@+id/login_email"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/pink_border"
+            android:drawableStart="@drawable/baseline_email_24"
+            android:drawablePadding="8dp"
+            android:hint="email"
+            android:padding="8dp" />
+
+        <EditText
+            android:id="@+id/login_password"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/pink_border"
+            android:drawableStart="@drawable/baseline_lock_24"
+            android:drawableEnd="@drawable/visibility_off"
+            android:drawablePadding="8dp"
+            android:hint="password"
+            android:inputType="textPassword"
+            android:padding="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/login_button"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/pink"
+            android:text="Login"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:cornerRadius="30dp" />
+
+        <TextView
+            android:id="@+id/signupRedirectText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="14dp"
+            android:padding="8dp"
+            android:text="Not yet registered? Signup"
+            android:textColor="@color/pink"
+            android:textSize="18sp"
+            android:gravity="center"/>
+    </LinearLayout>
+</ScrollView>
