@@ -18,19 +18,19 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="32dp"
+            android:layout_weight="0" />
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="198dp"
-            android:layout_height="226dp"
+            android:layout_height="239dp"
             app:srcCompat="@drawable/logo_smtm" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="0" />
 
         <TextView
             android:id="@+id/SMTM"

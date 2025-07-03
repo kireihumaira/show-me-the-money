@@ -1,91 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:padding="16dp"
-    android:gravity="center_horizontal">
+    android:padding="16dp">
 
-    <!-- Handle bar -->
-    <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
-        android:background="@drawable/baseline_drag_handle_24"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp" />
+    <!-- Tombol Close -->
+    <ImageView
+        android:id="@+id/cancelButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="end"
+        android:src="@drawable/baseline_clear_24"
+        android:contentDescription="Tutup"
+        android:padding="4dp" />
 
-    <!-- Title and Close -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:text="Pilih Jenis Transaksi"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="16dp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Catatan"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/black" />
-
-        <ImageView
-            android:id="@+id/cancelButton"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/baseline_clear_24"
-            app:tint="@color/black"
-            android:contentDescription="Close" />
-    </LinearLayout>
-
-    <!-- Item 1 -->
+    <!-- Pilihan Pengeluaran -->
     <LinearLayout
         android:id="@+id/layoutPengeluaran"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingVertical="12dp"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_money_bag"
-            app:tint="@color/black" />
+        android:padding="12dp"
+        android:background="#F5F5F5"
+        android:layout_marginBottom="8dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:text="Pengeluaran"
-            android:textColor="@color/black"
             android:textSize="16sp" />
     </LinearLayout>
 
-    <!-- Item 2 -->
+    <!-- Pilihan Pemasukan -->
     <LinearLayout
         android:id="@+id/layoutPemasukan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingVertical="12dp"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_spend_money"
-            app:tint="@color/black" />
+        android:padding="12dp"
+        android:background="#F5F5F5">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:text="Pemasukan"
-            android:textColor="@color/black"
             android:textSize="16sp" />
     </LinearLayout>
 
