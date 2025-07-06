@@ -20,7 +20,10 @@
             android:background="@drawable/ic_circle"
             android:padding="4dp"
             android:contentDescription="@string/profile_image_desc"
-            android:src="@drawable/ic_profile" />
+            android:src="@drawable/ic_profile"
+            android:clickable="true"
+            android:focusable="true"/>
+
 
         <!-- Name Display -->
         <TextView
@@ -33,15 +36,6 @@
             android:textColor="@color/pink"
             android:layout_marginBottom="8dp"/>
 
-        <!-- Name Input -->
-        <EditText
-            android:id="@+id/edit_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nama Lengkap"
-            android:visibility="gone"
-            android:layout_marginBottom="8dp" />
-
         <TextView
             android:id="@+id/profile_email"
             android:layout_width="wrap_content"
@@ -50,6 +44,15 @@
             android:textSize="16sp"
             android:textColor="@android:color/darker_gray"
             android:layout_marginBottom="8dp"/>
+
+        <!-- Name Input -->
+        <EditText
+            android:id="@+id/edit_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nama Lengkap"
+            android:visibility="gone"
+            android:layout_marginBottom="8dp" />
 
         <EditText
             android:id="@+id/edit_gender"

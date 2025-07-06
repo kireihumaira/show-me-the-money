@@ -14,6 +14,8 @@ import android.widget.Toast;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.util.Log;
 
 import androidx.fragment.app.Fragment;
 
@@ -28,6 +30,9 @@ public class ProfileFragment extends Fragment {
 
     private DatabaseHelper dbHelper;
     private String userEmail;
+
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private Uri selectedImageUri;
 
     public ProfileFragment() {
     }
@@ -51,6 +56,12 @@ public class ProfileFragment extends Fragment {
         SharedPreferences prefs = requireContext().getSharedPreferences("session", Context.MODE_PRIVATE);
         userEmail = prefs.getString("email", "");
         loadUserData();
+
+        profileImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        });
 
         editButton.setOnClickListener(v -> {
             profileName.setVisibility(View.GONE);
@@ -100,6 +111,35 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == getActivity().RESULT_OK && data != null && data.getData() != null) {
+            selectedImageUri = data.getData();
+
+            Log.d("PROFILE_FRAGMENT", "onActivityResult called with URI: " + selectedImageUri);
+
+            // Tampilkan gambar
+            Glide.with(requireContext())
+                    .load(selectedImageUri)
+                    .circleCrop()
+                    .into(profileImage);
+
+            // Simpan path ke DB
+            if (selectedImageUri != null) {
+                boolean updated = dbHelper.updateUser(userEmail,
+                        editName.getText().toString().trim(),
+                        editGender.getText().toString().trim(),
+                        selectedImageUri.toString()); // Simpan URI sebagai string
+
+                if (updated) {
+                    Toast.makeText(getContext(), "Foto profil diperbarui", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
     private void loadUserData() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM allusers WHERE email = ?", new String[]{userEmail});
@@ -114,8 +154,7 @@ public class ProfileFragment extends Fragment {
             editGender.setText(gender);
 
             if (photoUrl != null && !photoUrl.isEmpty()) {
-                if (photoUrl.startsWith("http")) {
-                    // Jika photo berupa URL
+                if (photoUrl.startsWith("http") || photoUrl.startsWith("content://")) {
                     Glide.with(requireContext())
                             .load(photoUrl)
                             .placeholder(R.drawable.ic_profile)
@@ -123,7 +162,6 @@ public class ProfileFragment extends Fragment {
                             .circleCrop()
                             .into(profileImage);
                 } else {
-                    // Coba load dari drawable (contoh: "ic_profile")
                     int resId = getResources().getIdentifier(photoUrl, "drawable", requireContext().getPackageName());
                     if (resId != 0) {
                         Glide.with(requireContext())
@@ -131,13 +169,11 @@ public class ProfileFragment extends Fragment {
                                 .circleCrop()
                                 .into(profileImage);
                     } else {
-                        profileImage.setImageResource(R.drawable.ic_profile); // fallback
+                        profileImage.setImageResource(R.drawable.ic_profile);
                     }
                 }
-            } else {
-                profileImage.setImageResource(R.drawable.ic_profile); // fallback default
             }
-            cursor.close();
         }
+        cursor.close();
     }
 }
