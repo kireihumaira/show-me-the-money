@@ -63,6 +63,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return exists;
     }
 
+    // ======================= PROFILE =======================
+    public boolean updateUser(String email, String name, String gender, String photo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        values.put("gender", gender);
+        values.put("photo", photo);
+        int result = db.update("allusers", values, "email = ?", new String[]{email});
+        return result > 0;
+    }
+
     // ======================= TRANSAKSI =======================
 
     // Insert transaksi baru

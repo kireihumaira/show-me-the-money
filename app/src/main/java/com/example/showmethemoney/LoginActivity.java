@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.MotionEvent;
-import android.view.View;
 import android.graphics.drawable.Drawable;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.content.SharedPreferences;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +25,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences prefs = getSharedPreferences("session", MODE_PRIVATE);
+        String savedEmail = prefs.getString("email", null);
+        if (savedEmail != null) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }
 
         // Inisialisasi ViewBinding
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
@@ -52,9 +58,16 @@ public class LoginActivity extends AppCompatActivity {
                 Boolean checkCredentials = databaseHelper.checkEmailPassword(email, password);
 
                 if (checkCredentials) {
+                    // ✅ Simpan email ke SharedPreferences
+                    getSharedPreferences("session", MODE_PRIVATE)
+                            .edit()
+                            .putString("email", email)
+                            .apply();
+
                     Toast.makeText(LoginActivity.this, "Login Successfully", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                } else {
+                    finish(); // agar tidak kembali ke login saat tekan tombol back
+            } else {
                     Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
                 }
             }
