@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomSheetInput"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/white"
+    android:gravity="bottom">
+
+    <!-- Label -->
+    <TextView
+        android:id="@+id/labelAnggaran"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Anggaran Bulanan"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Kotak Input Anggaran -->
+    <EditText
+        android:id="@+id/inputNominal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Rp 0"
+        android:inputType="number"
+        android:textSize="24sp"
+        android:gravity="end"
+        android:background="@drawable/bg_catatan_input"
+        android:padding="12dp"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp" />
+
+
+    <!-- Grid Keypad -->
+    <GridLayout
+        android:id="@+id/gridKeypad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="4"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:alignmentMode="alignMargins"
+        android:useDefaultMargins="true">
+
+        <Button android:text="1" style="@style/KeypadButton" />
+        <Button android:text="2" style="@style/KeypadButton" />
+        <Button android:text="3" style="@style/KeypadButton" />
+        <Button android:text="4" style="@style/KeypadButton" />
+        <Button android:text="5" style="@style/KeypadButton" />
+        <Button android:text="6" style="@style/KeypadButton" />
+        <Button android:text="7" style="@style/KeypadButton" />
+        <Button android:text="8" style="@style/KeypadButton" />
+        <Button android:text="9" style="@style/KeypadButton" />
+        <Button android:text="C" style="@style/KeypadButton" />
+        <Button android:text="0" style="@style/KeypadButton" />
+        <Button android:text="←" style="@style/KeypadButton" />
+    </GridLayout>
+
+    <!-- Tombol Selesai -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:id="@+id/btnSelesai"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_centang"
+            android:background="@drawable/bg_icon_button"
+            android:scaleType="centerInside"
+            android:padding="8dp"
+            android:contentDescription="Selesai" />
+    </LinearLayout>
+</LinearLayout>

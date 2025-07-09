@@ -15,9 +15,9 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class BottomSheetKategori extends BottomSheetDialogFragment {
+public class BottomSheetPemasukan extends BottomSheetDialogFragment {
 
-    private final String jenis;
+    private String jenis;
 
     public interface OnKategoriSelectedListener {
         void onKategoriSelected(String jenis, String kategori);
@@ -29,8 +29,12 @@ public class BottomSheetKategori extends BottomSheetDialogFragment {
         this.listener = listener;
     }
 
-    public BottomSheetKategori(String jenis) {
-        this.jenis = jenis;
+    public static BottomSheetPemasukan newInstance(String jenis) {
+        BottomSheetPemasukan fragment = new BottomSheetPemasukan();
+        Bundle args = new Bundle();
+        args.putString("jenis", jenis);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Nullable
@@ -43,51 +47,36 @@ public class BottomSheetKategori extends BottomSheetDialogFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        jenis = getArguments() != null ? getArguments().getString("jenis") : "pemasukan";
+
         GridLayout gridLayout = view.findViewById(R.id.gridKategori);
 
-        String[] kategoriList = {"Makanan", "Belanja", "Telepon", "Hiburan", "Pendidikan", "Kecantikan", "Olahraga", "Sosial", "Transportasi", "Pakaian", "Mobil", "Minuman",
-                "Rokok", "Elektronik", "Bepergian", "Kesehatan", "Peliharaan", "Perbaikan", "Perumahan", "Rumah", "Hadiah", "Donasi", "Lotre", "Anak-Anak"};
+        String[] kategoriList = {"Gaji", "Investasi", "Paruh Waktu", "Penghargaan", "Lain-Lain"};
         int[] iconList = {
-                R.drawable.ic_makanan,
-                R.drawable.ic_belanja,
-                R.drawable.ic_telepon,
-                R.drawable.ic_hiburan,
-                R.drawable.ic_pendidikan,
-                R.drawable.ic_kecantikan,
-                R.drawable.ic_olahraga,
-                R.drawable.ic_sosial,
-                R.drawable.ic_transportasi,
-                R.drawable.ic_pakaian,
-                R.drawable.ic_mobil,
-                R.drawable.ic_minuman,
-                R.drawable.ic_rokok,
-                R.drawable.ic_elektronik,
-                R.drawable.ic_bepergian,
-                R.drawable.ic_kesehatan,
-                R.drawable.ic_peliharaan,
-                R.drawable.ic_perbaikan,
-                R.drawable.ic_perumahan,
-                R.drawable.ic_rumah,
-                R.drawable.ic_hadiah,
-                R.drawable.ic_donasi,
-                R.drawable.ic_lotre,
-                R.drawable.ic_anak_anak
+                R.drawable.ic_gaji,
+                R.drawable.ic_investasi,
+                R.drawable.ic_paruh_waktu,
+                R.drawable.ic_penghargaan,
+                R.drawable.baseline_add_24
         };
 
         for (int i = 0; i < kategoriList.length; i++) {
             String kategori = kategoriList[i];
             int iconRes = iconList[i];
 
+            // Parent Layout tiap item
             LinearLayout itemLayout = new LinearLayout(getContext());
             itemLayout.setOrientation(LinearLayout.VERTICAL);
             itemLayout.setGravity(Gravity.CENTER);
             itemLayout.setPadding(8, 8, 8, 8);
 
+            // Set layout width 0 + columnSpec 1f (biar 4 item rata)
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 0;
             params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
             itemLayout.setLayoutParams(params);
 
+            // Icon gambar
             ImageView icon = new ImageView(getContext());
             icon.setImageResource(iconRes);
             icon.setBackgroundResource(R.drawable.bg_kategori_circle);
@@ -98,6 +87,7 @@ public class BottomSheetKategori extends BottomSheetDialogFragment {
             iconParams.bottomMargin = 8;
             icon.setLayoutParams(iconParams);
 
+            // Teks nama kategori
             TextView text = new TextView(getContext());
             text.setText(kategori);
             text.setTextColor(getResources().getColor(android.R.color.black));

@@ -5,36 +5,64 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String databaseName = "money_tracker.db";
+    private static final int DATABASE_VERSION = 3; // ditingkatkan ke versi 3
 
     public DatabaseHelper(@Nullable Context context) {
-        super(context, databaseName, null, 1);
+        super(context, databaseName, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE allusers(email TEXT PRIMARY KEY, password TEXT, name TEXT, gender TEXT, photo TEXT)");
+        db.execSQL("CREATE TABLE allusers(" +
+                "email TEXT PRIMARY KEY, " +
+                "password TEXT, " +
+                "name TEXT, " +
+                "gender TEXT, " +
+                "photo TEXT)");
 
-
-        // Tabel transaksi
         db.execSQL("CREATE TABLE transaksi (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "jenis TEXT, " +               // pemasukan / pengeluaran
-                "jumlah INTEGER, " +           // nominal
-                "kategori TEXT, " +            // contoh: Gaji, Makanan
-                "tanggal TEXT)");              // format: yyyy-MM-dd
+                "jenis TEXT, " +
+                "jumlah INTEGER, " +
+                "kategori TEXT, " +
+                "tanggal TEXT, " +
+                "catatan TEXT)");
+
+        db.execSQL("CREATE TABLE anggaran_bulanan (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "bulan TEXT NOT NULL, " +          // format: "2025-07"
+                "nominal INTEGER NOT NULL)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS allusers");
-        db.execSQL("DROP TABLE IF EXISTS transaksi");
-        onCreate(db);
+        if (oldVersion < 2) {
+            try {
+                db.execSQL("ALTER TABLE transaksi ADD COLUMN catatan TEXT");
+                Log.d("DB_UPGRADE", "Kolom 'catatan' berhasil ditambahkan.");
+            } catch (Exception e) {
+                Log.e("DB_UPGRADE", "Gagal menambahkan kolom catatan: " + e.getMessage());
+            }
+        }
+
+        if (oldVersion < 3) {
+            try {
+                db.execSQL("CREATE TABLE IF NOT EXISTS anggaran_bulanan (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "bulan TEXT NOT NULL, " +
+                        "nominal INTEGER NOT NULL)");
+                Log.d("DB_UPGRADE", "Tabel 'anggaran_bulanan' berhasil dibuat.");
+            } catch (Exception e) {
+                Log.e("DB_UPGRADE", "Gagal membuat tabel anggaran: " + e.getMessage());
+            }
+        }
     }
 
     // ======================= LOGIN / SIGNUP =======================
@@ -76,41 +104,105 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // ======================= TRANSAKSI =======================
 
-    // Insert transaksi baru
-    public boolean insertTransaksi(String jenis, int jumlah, String kategori, String tanggal) {
+    public boolean insertTransaksi(String jenis, int jumlah, String kategori, String tanggal, String catatan) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("jenis", jenis);           // "pemasukan" atau "pengeluaran"
+        values.put("jenis", jenis);
         values.put("jumlah", jumlah);
         values.put("kategori", kategori);
-        values.put("tanggal", tanggal);       // format: yyyy-MM-dd
+        values.put("tanggal", tanggal);
+        values.put("catatan", catatan);
+
+        Log.d("INSERT_TRANSAKSI", "jenis=" + jenis + ", jumlah=" + jumlah +
+                ", kategori=" + kategori + ", tanggal=" + tanggal + ", catatan=" + catatan);
+
         long result = db.insert("transaksi", null, values);
+        Log.d("INSERT_TRANSAKSI", "Insert result: " + result);
         return result != -1;
     }
 
-    // Total pemasukan/pengeluaran dalam bulan tertentu (yyyy-MM)
     public int getTotalByJenisAndBulan(String jenis, String bulanTahun) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT SUM(jumlah) FROM transaksi WHERE jenis = ? AND tanggal LIKE ?",
-                new String[]{jenis, bulanTahun + "%"});
-
         int total = 0;
-        if (cursor.moveToFirst()) total = cursor.getInt(0);
+
+        Cursor cursor = db.rawQuery(
+                "SELECT SUM(jumlah) FROM transaksi WHERE LOWER(jenis) = ? AND tanggal LIKE ?",
+                new String[]{jenis.toLowerCase(), bulanTahun + "%"}
+        );
+
+        if (cursor.moveToFirst() && !cursor.isNull(0)) {
+            total = cursor.getInt(0);
+        }
+
         cursor.close();
         return total;
     }
 
-    // Hitung saldo akhir bulan tertentu
     public int getSaldoAkhir(String bulanTahun) {
         int pemasukan = getTotalByJenisAndBulan("pemasukan", bulanTahun);
         int pengeluaran = getTotalByJenisAndBulan("pengeluaran", bulanTahun);
         return pemasukan - pengeluaran;
     }
 
-    // Mendapatkan semua transaksi pada bulan tertentu
     public Cursor getTransaksiByBulan(String bulanTahun) {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM transaksi WHERE tanggal LIKE ? ORDER BY tanggal DESC",
                 new String[]{bulanTahun + "%"});
+    }
+
+    public boolean deleteTransaksi(String jenis, int jumlah, String kategori, String tanggal, String catatan) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete("transaksi", "jenis=? AND jumlah=? AND kategori=? AND tanggal=? AND catatan=?",
+                new String[]{jenis, String.valueOf(jumlah), kategori, tanggal, catatan}) > 0;
+    }
+
+    public boolean updateTransaksi(String jenis, int jumlahLama, String kategori, String tanggalLama, String catatanLama,
+                                   int jumlahBaru, String tanggalBaru, String catatanBaru) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("jumlah", jumlahBaru);
+        values.put("tanggal", tanggalBaru);
+        values.put("catatan", catatanBaru);
+
+        int rows = db.update(
+                "transaksi",
+                values,
+                "jenis = ? AND jumlah = ? AND kategori = ? AND tanggal = ? AND catatan = ?",
+                new String[]{jenis, String.valueOf(jumlahLama), kategori, tanggalLama, catatanLama}
+        );
+
+        Log.d("UPDATE_TRANSAKSI", "Rows updated: " + rows);
+        return rows > 0;
+    }
+
+
+    // ======================= ANGGARAN BULANAN =======================
+
+    public int getAnggaranByBulan(String bulanTahun) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT nominal FROM anggaran_bulanan WHERE bulan = ?", new String[]{bulanTahun});
+        int anggaran = 0;
+        if (cursor.moveToFirst()) {
+            anggaran = cursor.getInt(0);
+        }
+        cursor.close();
+        return anggaran;
+    }
+
+    public void insertOrUpdateAnggaran(String bulanTahun, int nominal) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT id FROM anggaran_bulanan WHERE bulan = ?", new String[]{bulanTahun});
+
+        ContentValues values = new ContentValues();
+        values.put("bulan", bulanTahun);
+        values.put("nominal", nominal);
+
+        if (cursor.moveToFirst()) {
+            db.update("anggaran_bulanan", values, "bulan = ?", new String[]{bulanTahun});
+        } else {
+            db.insert("anggaran_bulanan", null, values);
+        }
+
+        cursor.close();
     }
 }

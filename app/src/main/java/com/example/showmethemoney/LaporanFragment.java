@@ -1,64 +1,107 @@
 package com.example.showmethemoney;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link LaporanFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 public class LaporanFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private TextView tvTotalPengeluaran, tvTotalPemasukan;
+    private TextView tvAnggaran, tvPengeluaran, tvTersisaPersen;
+    private CircularProgress progressLingkaran;
+    private LinearLayout cardStatistikBulanan;
+    private LinearLayout cardAnggaranBulanan;
+    private String selectedMonth, selectedYear;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private final DecimalFormat formatter = new DecimalFormat("#,###");
 
-    public LaporanFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LaporanFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static LaporanFragment newInstance(String param1, String param2) {
-        LaporanFragment fragment = new LaporanFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_laporan, container, false);
+
+        // Statistik bulanan
+        tvTotalPengeluaran = view.findViewById(R.id.tvTotalPengeluaran);
+        tvTotalPemasukan = view.findViewById(R.id.tvTotalPemasukan);
+        cardStatistikBulanan = view.findViewById(R.id.cardStatistikBulanan);
+
+        // Anggaran bulanan
+        tvAnggaran = view.findViewById(R.id.tvAnggaran);
+        tvPengeluaran = view.findViewById(R.id.tvPengeluaran);
+        tvTersisaPersen = view.findViewById(R.id.tvTersisaPersen);
+        progressLingkaran = view.findViewById(R.id.progressLingkaran);
+        cardAnggaranBulanan = view.findViewById(R.id.cardAnggaranBulanan);
+
+        // Navigasi ke Statistik
+        cardStatistikBulanan.setOnClickListener(v -> {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frame_layout, new StatistikBulananFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
+
+        // Navigasi ke Anggaran Bulanan
+        cardAnggaranBulanan.setOnClickListener(v -> {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.frame_layout, new FragmentAnggaranBulanan());
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
+
+        // Ambil bulan-tahun sekarang
+        Calendar calendar = Calendar.getInstance();
+        selectedYear = String.valueOf(calendar.get(Calendar.YEAR));
+        selectedMonth = String.format(Locale.getDefault(), "%02d", calendar.get(Calendar.MONTH) + 1);
+
+        // Load data
+        loadStatistikBulanan();
+        loadAnggaranBulanan();
+
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_laporan, container, false);
+    private void loadStatistikBulanan() {
+        DatabaseHelper db = new DatabaseHelper(requireContext());
+
+        String bulanTahun = selectedYear + "-" + selectedMonth;
+        int totalPengeluaran = db.getTotalByJenisAndBulan("pengeluaran", bulanTahun);
+        int totalPemasukan = db.getTotalByJenisAndBulan("pemasukan", bulanTahun);
+
+        tvTotalPengeluaran.setText(formatRupiah(totalPengeluaran));
+        tvTotalPemasukan.setText(formatRupiah(totalPemasukan));
+    }
+
+    private void loadAnggaranBulanan() {
+        DatabaseHelper db = new DatabaseHelper(requireContext());
+
+        String bulanTahun = selectedYear + "-" + selectedMonth;
+        int anggaran = db.getAnggaranByBulan(bulanTahun);
+        int pengeluaran = db.getTotalByJenisAndBulan("pengeluaran", bulanTahun);
+        int tersisa = anggaran - pengeluaran;
+
+        tvTersisaPersen.setText("Tersisa : " + formatRupiah(tersisa));
+        tvAnggaran.setText("Anggaran : " + formatRupiah(anggaran));
+        tvPengeluaran.setText("Pengeluaran : " + formatRupiah(pengeluaran));
+
+        int persenTersisa = anggaran > 0 ? (int) ((tersisa * 100.0f) / anggaran) : 0;
+        if (persenTersisa < 0) persenTersisa = 0;
+        progressLingkaran.setProgress(persenTersisa);
+    }
+
+    private String formatRupiah(int nominal) {
+        return "Rp" + formatter.format(nominal).replace(",", ".");
     }
 }

@@ -20,6 +20,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <!-- Toolbar dengan title custom -->
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -27,8 +28,23 @@
                 android:background="@color/pink"
                 android:elevation="4dp"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                android:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                android:gravity="center_vertical"
+                android:title=""> <!-- Kosongkan agar default title tidak muncul -->
 
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Catatan"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_gravity="center" />
+            </androidx.appcompat.widget.Toolbar>
+
+            <!-- Frame untuk fragment -->
             <FrameLayout
                 android:id="@+id/frame_layout"
                 android:layout_width="match_parent"
@@ -36,37 +52,28 @@
                 android:layout_weight="1" />
         </LinearLayout>
 
-        <!-- Floating Action Button -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:layout_margin="16dp"
-            android:src="@drawable/baseline_add_24"
-            android:contentDescription="@string/fab_description"
-            app:backgroundTint="@color/pink" />
-
-        <!-- Bottom App Bar -->
-        <com.google.android.material.bottomappbar.BottomAppBar
-            android:id="@+id/bottomAppBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@color/white"
-            app:fabAlignmentMode="center"
-            app:fabCradleMargin="10dp"
-            app:fabCradleRoundedCornerRadius="50dp"
-            app:hideOnScroll="false" />
-
-        <!-- Bottom NavigationView berada DI LUAR BottomAppBar -->
+        <!-- Bottom Navigation -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@android:color/transparent"
-            app:labelVisibilityMode="labeled"
+            android:background="@color/white"
             app:menu="@menu/bottom_menu" />
+
+
+
+        <!-- FAB -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="36dp"
+            android:layout_margin="16dp"
+            android:contentDescription="@string/fab_description"
+            android:src="@drawable/baseline_add_24"
+            app:backgroundTint="@color/pink" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

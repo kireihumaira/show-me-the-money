@@ -10,16 +10,14 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -29,47 +27,53 @@ public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton fab;
     BottomNavigationView bottomNavigationView;
+    TextView toolbarTitle;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Aktifkan edge-to-edge
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Atur padding berdasarkan insets sistem (status/nav bar)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+        fab = findViewById(R.id.fab);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbarTitle = findViewById(R.id.toolbar_title);
+
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false); // Ini penting!
+        }
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, insets) -> {
+            int top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+            v.setPadding(0, top, 0, 0);
             return insets;
         });
 
-        // Inisialisasi view
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        fab = findViewById(R.id.fab);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-
-        setSupportActionBar(toolbar);
-
-        // Buka fragment default
         if (savedInstanceState == null) {
-            replaceFragment(new HomeFragment());
+            currentFragment = new HomeFragment();
+            replaceFragment(currentFragment, "Catatan");
         }
 
-        // Perbaikan switch-case → if-else karena R.id.* bukan final
         bottomNavigationView.setBackground(null);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
             if (itemId == R.id.catatan) {
-                replaceFragment(new HomeFragment());
+                currentFragment = new HomeFragment();
+                replaceFragment(currentFragment, "Catatan");
             } else if (itemId == R.id.grafik) {
-                replaceFragment(new GrafikFragment());
+                currentFragment = new GrafikFragment();
+                replaceFragment(currentFragment, "Grafik");
             } else if (itemId == R.id.laporan) {
-                replaceFragment(new LaporanFragment());
+                currentFragment = new LaporanFragment();
+                replaceFragment(currentFragment, "Laporan");
             } else if (itemId == R.id.profile) {
-                replaceFragment(new ProfileFragment());
+                currentFragment = new ProfileFragment();
+                replaceFragment(currentFragment, "Profil");
             }
 
             return true;
@@ -78,11 +82,12 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(view -> showBottomDialog());
     }
 
-    private void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, fragment);
-        fragmentTransaction.commit();
+    private void replaceFragment(Fragment fragment, String title) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame_layout, fragment);
+        transaction.commit();
+
+        toolbarTitle.setText(title);
     }
 
     private void showBottomDialog() {
@@ -90,18 +95,40 @@ public class MainActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomsheetlayout);
 
-        LinearLayout videoLayout = dialog.findViewById(R.id.layoutPemasukan);
-        LinearLayout shortsLayout = dialog.findViewById(R.id.layoutPengeluaran);
+        LinearLayout layoutPemasukan = dialog.findViewById(R.id.layoutPemasukan);
+        LinearLayout layoutPengeluaran = dialog.findViewById(R.id.layoutPengeluaran);
         ImageView cancelButton = dialog.findViewById(R.id.cancelButton);
 
-        videoLayout.setOnClickListener(v -> {
+        layoutPemasukan.setOnClickListener(v -> {
             dialog.dismiss();
-            Toast.makeText(MainActivity.this, "Upload a Video is clicked", Toast.LENGTH_SHORT).show();
+
+            BottomSheetPemasukan bottomSheetPemasukan = BottomSheetPemasukan.newInstance("Pemasukan");
+            bottomSheetPemasukan.setOnKategoriSelectedListener((jenis, kategori) -> {
+                BottomSheetInput input = BottomSheetInput.newInstance(jenis, kategori);
+                input.setOnTransaksiSavedListener(() -> {
+                    if (currentFragment instanceof HomeFragment) {
+                        ((HomeFragment) currentFragment).updateData(); // Update total
+                    }
+                });
+                input.show(getSupportFragmentManager(), "BottomSheetInput");
+            });
+            bottomSheetPemasukan.show(getSupportFragmentManager(), "BottomSheetPemasukan");
         });
 
-        shortsLayout.setOnClickListener(v -> {
+        layoutPengeluaran.setOnClickListener(v -> {
             dialog.dismiss();
-            Toast.makeText(MainActivity.this, "Create a short is clicked", Toast.LENGTH_SHORT).show();
+
+            BottomSheetKategori bottomSheetPengeluaran = new BottomSheetKategori("Pengeluaran");
+            bottomSheetPengeluaran.setOnKategoriSelectedListener((jenis, kategori) -> {
+                BottomSheetInput input = BottomSheetInput.newInstance(jenis, kategori);
+                input.setOnTransaksiSavedListener(() -> {
+                    if (currentFragment instanceof HomeFragment) {
+                        ((HomeFragment) currentFragment).updateData(); // Update total
+                    }
+                });
+                input.show(getSupportFragmentManager(), "BottomSheetInput");
+            });
+            bottomSheetPengeluaran.show(getSupportFragmentManager(), "BottomSheetKategori");
         });
 
         cancelButton.setOnClickListener(view -> dialog.dismiss());

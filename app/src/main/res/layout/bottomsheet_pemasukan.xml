@@ -6,6 +6,16 @@
     android:background="@color/white"
     android:padding="16dp">
 
+    <!-- Tombol Close -->
+    <ImageView
+        android:id="@+id/cancelButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="end"
+        android:src="@drawable/baseline_clear_24"
+        android:contentDescription="Tutup"
+        android:padding="4dp" />
+
     <!-- Title -->
     <TextView
         android:layout_width="wrap_content"
@@ -21,7 +31,9 @@
         android:id="@+id/gridKategori"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="4"
-        android:useDefaultMargins="true"
-        android:alignmentMode="alignMargins" />
+        android:columnCount="5"
+        android:padding="8dp"
+        android:alignmentMode="alignMargins"
+        android:useDefaultMargins="true" />
+
 </LinearLayout>

@@ -1,46 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/homeRoot"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootHome"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:background="@color/white">
 
-    <TextView
-        android:id="@+id/textMonth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bulan Ini"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:paddingBottom="16dp" />
+    <!-- Konten scrollable -->
+    <ScrollView
+        android:id="@+id/scrollViewHome"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp"
+        android:fitsSystemWindows="true">
 
-    <TextView
-        android:id="@+id/textPemasukan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pemasukan: Rp 0"
-        android:textSize="18sp"
-        android:textColor="@android:color/holo_green_dark"
-        android:paddingBottom="8dp" />
+    <LinearLayout
+            android:id="@+id/homeRoot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <TextView
-        android:id="@+id/textPengeluaran"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pengeluaran: Rp 0"
-        android:textSize="18sp"
-        android:textColor="@android:color/holo_red_dark"
-        android:paddingBottom="8dp" />
+            <!-- Header (Tahun, Pengeluaran, Pemasukan) -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:weightSum="3"
+                android:paddingBottom="8dp">
 
-    <TextView
-        android:id="@+id/textSaldo"
-        android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tvTahun"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="2025"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tvPengeluaran"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Pengeluaran"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/tvPemasukan"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Pemasukan"
+                    android:gravity="end" />
+            </LinearLayout>
+
+            <!-- Subheader (Bulan & Total) -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginTop="12dp"
+                android:weightSum="3"
+                android:paddingBottom="8dp">
+
+                <LinearLayout
+                    android:id="@+id/layoutBulan"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvBulan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Juli"
+                        android:textSize="16sp"
+                        android:textColor="#000000"/>
+
+                    <ImageView
+                        android:id="@+id/iconDropdown"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_dropdown"
+                        android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvTotalPengeluaran"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Rp0"
+                    android:gravity="center"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvTotalPemasukan"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Rp0"
+                    android:gravity="end"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Garis pemisah -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="12dp"
+                android:background="#D3D3D3" />
+
+            <!-- Container transaksi harian -->
+            <LinearLayout
+                android:id="@+id/layoutTransaksiPerHari"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:divider="@drawable/bottom_line"
+                android:showDividers="middle"
+                android:dividerPadding="12dp"
+                android:paddingBottom="16dp" />
+        </LinearLayout>
+    </ScrollView>
+
+
+
+            <!-- Bottom Navigation -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Saldo: Rp 0"
-        android:textSize="18sp"
-        android:textColor="@android:color/black" />
-</LinearLayout>
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:menu="@menu/bottom_menu" />
+
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>

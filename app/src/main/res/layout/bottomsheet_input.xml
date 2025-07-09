@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomSheetInput"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@color/white">
+
+    <!-- Tampilan Jumlah Nominal -->
+    <TextView
+        android:id="@+id/tvNominal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rp0"
+        android:textSize="32sp"
+        android:textColor="@android:color/black"
+        android:gravity="end"
+        android:paddingBottom="16dp" />
+
+    <!-- Input Catatan dengan icon kamera -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <EditText
+            android:id="@+id/etCatatan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Catatan: masukkan catatan"
+            android:background="@drawable/bg_catatan_input"
+            android:paddingEnd="48dp"
+            android:padding="12dp"
+            android:textColorHint="@android:color/darker_gray"
+            android:textColor="@android:color/black" />
+
+        <ImageView
+            android:id="@+id/btnUpload"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="Upload Gambar" />
+
+    </FrameLayout>
+
+
+
+    <!-- Grid Keypad -->
+    <GridLayout
+        android:id="@+id/gridKeypad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="4"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="8dp"
+        android:alignmentMode="alignMargins"
+        android:useDefaultMargins="true">
+
+        <Button android:text="1" style="@style/KeypadButton" />
+        <Button android:text="2" style="@style/KeypadButton" />
+        <Button android:text="3" style="@style/KeypadButton" />
+        <Button android:text="4" style="@style/KeypadButton" />
+        <Button android:text="5" style="@style/KeypadButton" />
+        <Button android:text="6" style="@style/KeypadButton" />
+        <Button android:text="7" style="@style/KeypadButton" />
+        <Button android:text="8" style="@style/KeypadButton" />
+        <Button android:text="9" style="@style/KeypadButton" />
+        <Button android:text="C" style="@style/KeypadButton" />
+        <Button android:text="0" style="@style/KeypadButton" />
+        <Button android:text="←" style="@style/KeypadButton" />
+
+    </GridLayout>
+
+    <!-- Aksi di sisi kanan -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp">
+
+        <ImageView
+            android:id="@+id/btnTanggal"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_kalender"
+            android:paddingRight="10dp"
+            android:contentDescription="Tanggal" />
+
+        <ImageView
+            android:id="@+id/btnSelesai"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_centang"
+            android:background="@drawable/bg_icon_button"
+            android:scaleType="centerInside"
+            android:padding="8dp"
+            android:contentDescription="Selesai" />
+
+    </LinearLayout>
+
+</LinearLayout>
