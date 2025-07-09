@@ -99,15 +99,21 @@ public class ProfileFragment extends Fragment {
         });
 
         logoutButton.setOnClickListener(v -> {
-            // Hapus session
-            prefs.edit().remove("email").apply();
+            new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Konfirmasi Logout")
+                    .setMessage("Apakah Anda yakin ingin keluar dari aplikasi?")
+                    .setPositiveButton("Ya", (dialog, which) -> {
+                        // Hapus session pakai prefs yang sudah ada
+                        prefs.edit().remove("email").apply();
 
-            // Kembali ke LoginActivity
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+                        // Kembali ke LoginActivity
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    })
+                    .setNegativeButton("Batal", null)
+                    .show();
         });
-
         return view;
     }
 

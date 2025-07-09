@@ -8,6 +8,8 @@ import android.view.View;
 import android.graphics.drawable.Drawable;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.view.inputmethod.InputMethodManager;
+import android.content.Context;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -94,6 +96,10 @@ public class SignupActivity extends AppCompatActivity {
         // === Toggle visibility mata ===
         setupPasswordVisibilityToggle(binding.signupPassword, R.drawable.baseline_lock_24);
         setupPasswordVisibilityToggle(binding.signupConfirm, R.drawable.passkey_pink);
+
+        binding.signupEmail.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(binding.signupEmail, InputMethodManager.SHOW_IMPLICIT);
     }
 
     private void setupPasswordVisibilityToggle(EditText passwordField, int startIcon) {

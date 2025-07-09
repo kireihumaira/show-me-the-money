@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.content.SharedPreferences;
+import android.view.inputmethod.InputMethodManager;
+import android.content.Context;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -81,6 +83,11 @@ public class LoginActivity extends AppCompatActivity {
 
         // === Toggle visibility password ===
         setupPasswordVisibilityToggle(binding.loginPassword, R.drawable.baseline_lock_24);
+
+        binding.loginEmail.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(binding.loginEmail, InputMethodManager.SHOW_IMPLICIT);
+
     }
 
     private void setupPasswordVisibilityToggle(EditText passwordField, int startIcon) {
