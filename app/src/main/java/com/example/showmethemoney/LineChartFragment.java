@@ -83,5 +83,59 @@ public class LineChartFragment extends Fragment {
 
         return view;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadChart(); // <- tambahkan method ini untuk memuat ulang data
+    }
+
+    public void loadChart() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("session", Context.MODE_PRIVATE);
+        String selectedMonth = prefs.getString("selected_month", "2025-07");
+
+        List<Entry> pemasukanEntries = new ArrayList<>();
+        List<Entry> pengeluaranEntries = new ArrayList<>();
+
+        Cursor cursor = dbHelper.getTransaksiByBulan(selectedMonth);
+        Map<Integer, Integer> pemasukanMap = new HashMap<>();
+        Map<Integer, Integer> pengeluaranMap = new HashMap<>();
+
+        while (cursor.moveToNext()) {
+            String jenis = cursor.getString(cursor.getColumnIndexOrThrow("jenis"));
+            int jumlah = cursor.getInt(cursor.getColumnIndexOrThrow("jumlah"));
+            String tanggal = cursor.getString(cursor.getColumnIndexOrThrow("tanggal"));
+
+            int day = Integer.parseInt(tanggal.split("-")[2]);
+
+            if (jenis.equalsIgnoreCase("pemasukan")) {
+                pemasukanMap.put(day, pemasukanMap.getOrDefault(day, 0) + jumlah);
+            } else {
+                pengeluaranMap.put(day, pengeluaranMap.getOrDefault(day, 0) + jumlah);
+            }
+        }
+        cursor.close();
+
+        for (int day = 1; day <= 31; day++) {
+            if (pemasukanMap.containsKey(day)) {
+                pemasukanEntries.add(new Entry(day, pemasukanMap.get(day)));
+            }
+            if (pengeluaranMap.containsKey(day)) {
+                pengeluaranEntries.add(new Entry(day, pengeluaranMap.get(day)));
+            }
+        }
+
+        LineDataSet set1 = new LineDataSet(pemasukanEntries, "Pemasukan");
+        set1.setColor(Color.GREEN);
+        set1.setCircleColor(Color.GREEN);
+
+        LineDataSet set2 = new LineDataSet(pengeluaranEntries, "Pengeluaran");
+        set2.setColor(Color.RED);
+        set2.setCircleColor(Color.RED);
+
+        LineData data = new LineData(set1, set2);
+        lineChart.setData(data);
+        lineChart.invalidate();
+    }
+
 }
 

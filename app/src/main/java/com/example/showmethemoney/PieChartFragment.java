@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -71,7 +72,46 @@ public class PieChartFragment extends Fragment {
         pieChart.setEntryLabelTextSize(12f);
         pieChart.animateY(1000, Easing.EaseInOutQuad);
         pieChart.invalidate();
-
         return view;
+    }
+    public void loadChart() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("session", Context.MODE_PRIVATE);
+        String selectedMonth = prefs.getString("selected_month", "2025-07");
+
+        Cursor cursor = dbHelper.getTransaksiByBulan(selectedMonth);
+        Map<String, Integer> kategoriMap = new HashMap<>();
+
+        while (cursor.moveToNext()) {
+            String jenis = cursor.getString(cursor.getColumnIndexOrThrow("jenis"));
+            if (!jenis.equalsIgnoreCase("pengeluaran")) continue;
+
+            int jumlah = cursor.getInt(cursor.getColumnIndexOrThrow("jumlah"));
+            String kategori = cursor.getString(cursor.getColumnIndexOrThrow("kategori"));
+            kategoriMap.put(kategori, kategoriMap.getOrDefault(kategori, 0) + jumlah);
+        }
+        cursor.close();
+
+        List<PieEntry> entries = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : kategoriMap.entrySet()) {
+            entries.add(new PieEntry(entry.getValue(), entry.getKey()));
+        }
+
+        PieDataSet dataSet = new PieDataSet(entries, "Pengeluaran per Kategori");
+        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        dataSet.setValueTextSize(14f);
+        dataSet.setSliceSpace(2f);
+
+        PieData pieData = new PieData(dataSet);
+
+        pieChart.setData(pieData);
+        pieChart.setUsePercentValues(true);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setDrawHoleEnabled(true);
+        pieChart.setHoleRadius(40f);
+        pieChart.setTransparentCircleRadius(45f);
+        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.setEntryLabelTextSize(12f);
+        pieChart.animateY(1000, Easing.EaseInOutQuad);
+        pieChart.invalidate(); // refresh
     }
 }

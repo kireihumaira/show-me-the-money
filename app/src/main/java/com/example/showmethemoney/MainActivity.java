@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 currentFragment = new HomeFragment();
                 replaceFragment(currentFragment, "Catatan");
             } else if (itemId == R.id.grafik) {
-                currentFragment = new com.example.showmethemoney.fragments.GrafikFragment();
+                currentFragment = new com.example.showmethemoney.GrafikFragment();
                 replaceFragment(currentFragment, "Grafik");
             } else if (itemId == R.id.laporan) {
                 currentFragment = new LaporanFragment();
