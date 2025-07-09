@@ -43,7 +43,11 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
+    implementation(libs.mpandroidchart)
+    implementation(libs.viewpager2)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
+
