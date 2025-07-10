@@ -9,7 +9,7 @@
     <!-- Header (Pink) -->
     <RelativeLayout
         android:id="@+id/headerLayout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="@color/pink"
         android:gravity="center_vertical"
@@ -17,7 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Tombol Back -->
         <ImageView
             android:id="@+id/btnBack"
             android:layout_width="48dp"
@@ -29,18 +28,18 @@
             android:contentDescription="Kembali"
             app:tint="@android:color/white" />
 
-        <!-- Judul Tengah -->
         <TextView
-            android:id="@+id/titleDetail"
+            android:id="@+id/tvJudulKategoriAnggaran"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
             android:text="Anggaran Bulanan"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:gravity="center"
+            android:paddingTop="28dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white" />
 
-        <!-- Dropdown Bulan-Tahun -->
         <LinearLayout
             android:id="@+id/layoutMonthPicker"
             android:layout_width="wrap_content"
@@ -88,142 +87,20 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
-            <!-- Card Anggaran -->
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvIntroText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_card_white"
-                android:padding="16dp"
-                android:elevation="2dp"
-                android:layout_marginBottom="16dp">
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingBottom="8dp"
+                android:textColor="@android:color/black" />
 
-                <!-- Judul + Tombol Edit -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:text="Anggaran Bulanan"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/tvEditAnggaran"
-                        android:text="Edit"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/pink"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:paddingHorizontal="12dp"
-                        android:paddingVertical="8dp"
-                        android:minHeight="48dp"
-                        android:gravity="center"
-                        android:clickable="true"
-                        android:focusable="true"/>
-                </LinearLayout>
-
-                    <!-- Isi -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <com.example.showmethemoney.CircularProgress
-                        android:id="@+id/progressLingkaran"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_marginEnd="16dp" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <!-- Tersisa -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginBottom="4dp">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Tersisa :" />
-
-                            <TextView
-                                android:id="@+id/tvTersisaPersen"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="7.985.000"
-                                android:gravity="end" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#D3D3D3"
-                            android:layout_marginBottom="8dp" />
-
-                        <!-- Anggaran -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginBottom="4dp">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Anggaran :" />
-
-                            <TextView
-                                android:id="@+id/tvAnggaran"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="10.000.000"
-                                android:gravity="end" />
-                        </LinearLayout>
-
-                        <!-- Pengeluaran -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Pengeluaran :" />
-
-                            <TextView
-                                android:id="@+id/tvPengeluaran"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="2.015.000"
-                                android:gravity="end" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutListKategori"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>
 

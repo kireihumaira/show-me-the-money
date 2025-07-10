@@ -43,8 +43,17 @@ public class CircularProgress extends View {
 
     public void setProgress(float progress) {
         this.progress = progress;
+        if (progress >= 70) {
+            progressPaint.setColor(0xFF4CAF50); // Hijau
+        } else if (progress >= 30) {
+            progressPaint.setColor(0xFFFFC107); // Kuning
+        } else {
+            progressPaint.setColor(0xFFF44336); // Merah
+        }
+
         invalidate();
     }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -56,4 +65,6 @@ public class CircularProgress extends View {
         canvas.drawArc(rect, 0, 360, false, backgroundPaint);
         canvas.drawArc(rect, -90, 360 * (progress / 100f), false, progressPaint);
     }
+
+
 }

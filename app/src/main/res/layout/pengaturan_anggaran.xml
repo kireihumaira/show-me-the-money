@@ -47,88 +47,17 @@
         app:layout_constraintTop_toBottomOf="@id/headerLayout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:importantForAccessibility="no"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Kontainer untuk daftar item anggaran -->
         <LinearLayout
             android:id="@+id/listAnggaran"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp" />
 
-            <!-- Contoh Item Anggaran -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="12dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:gravity="center_vertical"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true">
-
-                <!-- Icon Hapus -->
-                <ImageView
-                    android:id="@+id/ivDelete"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="12dp"
-                    android:src="@drawable/ic_dnd"
-                    app:tint="#BBBBBB" />
-
-                <!-- Lingkaran icon kategori -->
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/bg_kategori_circle"
-                    android:layout_gravity="center">
-
-                    <ImageView
-                        android:id="@+id/ivIconKategoriMakanan"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_makanan"
-                        android:background="@color/pink"
-
-                        />
-                </FrameLayout>
-
-                <!-- Nama Kategori -->
-                <TextView
-                    android:id="@+id/tvKategori"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Makanan"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
-
-                <!-- Nilai atau Edit -->
-                <TextView
-                    android:id="@+id/tvAnggaranValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Edit"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:layout_marginEnd="8dp" />
-
-                <!-- Icon Panah -->
-                <ImageView
-                    android:id="@+id/ivArrow"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_arrow_ios"
-                    app:tint="@android:color/darker_gray" />
-            </LinearLayout>
-
-            <!-- Tambahkan item lain di sini jika ingin statis, atau dinamis dari kode -->
-
-        </LinearLayout>
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

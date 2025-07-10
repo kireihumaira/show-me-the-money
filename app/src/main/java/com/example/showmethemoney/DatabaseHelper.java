@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import java.util.List;
+import java.util.ArrayList;
+
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -37,7 +40,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE anggaran_bulanan (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "bulan TEXT NOT NULL, " +          // format: "2025-07"
+                "bulan TEXT NOT NULL, " +
+                "kategori TEXT NOT NULL, " +
                 "nominal INTEGER NOT NULL)");
     }
 
@@ -54,16 +58,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (oldVersion < 3) {
             try {
-                db.execSQL("CREATE TABLE IF NOT EXISTS anggaran_bulanan (" +
+                db.execSQL("DROP TABLE IF EXISTS anggaran_bulanan"); // tambahkan ini
+                db.execSQL("CREATE TABLE anggaran_bulanan (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         "bulan TEXT NOT NULL, " +
+                        "kategori TEXT NOT NULL, " +
                         "nominal INTEGER NOT NULL)");
-                Log.d("DB_UPGRADE", "Tabel 'anggaran_bulanan' berhasil dibuat.");
+                Log.d("DB_UPGRADE", "Tabel 'anggaran_bulanan' berhasil direset.");
             } catch (Exception e) {
-                Log.e("DB_UPGRADE", "Gagal membuat tabel anggaran: " + e.getMessage());
+                Log.e("DB_UPGRADE", "Gagal meng-upgrade tabel anggaran_bulanan: " + e.getMessage());
             }
         }
     }
+
 
     // ======================= LOGIN / SIGNUP =======================
     public Boolean insertData(String email, String password) {
@@ -180,29 +187,81 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public int getAnggaranByBulan(String bulanTahun) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT nominal FROM anggaran_bulanan WHERE bulan = ?", new String[]{bulanTahun});
-        int anggaran = 0;
-        if (cursor.moveToFirst()) {
-            anggaran = cursor.getInt(0);
+        Cursor cursor = db.rawQuery("SELECT SUM(nominal) FROM anggaran_bulanan WHERE bulan = ?", new String[]{bulanTahun});
+        int totalAnggaran = 0;
+        if (cursor.moveToFirst() && !cursor.isNull(0)) {
+            totalAnggaran = cursor.getInt(0);
         }
         cursor.close();
-        return anggaran;
+        return totalAnggaran;
     }
 
-    public void insertOrUpdateAnggaran(String bulanTahun, int nominal) {
+
+    public void insertOrUpdateAnggaran(String bulan, String kategori, int nominal) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT id FROM anggaran_bulanan WHERE bulan = ?", new String[]{bulanTahun});
+        Cursor cursor = db.rawQuery("SELECT id FROM anggaran_bulanan WHERE bulan = ? AND kategori = ?", new String[]{bulan, kategori});
 
         ContentValues values = new ContentValues();
-        values.put("bulan", bulanTahun);
+        values.put("bulan", bulan);
+        values.put("kategori", kategori);
         values.put("nominal", nominal);
 
         if (cursor.moveToFirst()) {
-            db.update("anggaran_bulanan", values, "bulan = ?", new String[]{bulanTahun});
+            db.update("anggaran_bulanan", values, "bulan = ? AND kategori = ?", new String[]{bulan, kategori});
         } else {
             db.insert("anggaran_bulanan", null, values);
         }
 
         cursor.close();
     }
+
+    public int getAnggaranByKategori(String bulan, String kategori) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT nominal FROM anggaran_bulanan WHERE bulan = ? AND kategori = ?", new String[]{bulan, kategori});
+        int nominal = 0;
+        if (cursor.moveToFirst()) {
+            nominal = cursor.getInt(0);
+        }
+        cursor.close();
+        return nominal;
+    }
+
+    public void deleteAnggaran(String bulan, String kategori) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("anggaran_bulanan", "bulan = ? AND kategori = ?", new String[]{bulan, kategori});
+    }
+
+    public int getTotalPengeluaranByKategori(String bulan, String kategori) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int total = 0;
+
+        // Ambil semua pengeluaran dengan kategori dan bulan yang sesuai
+        Cursor cursor = db.rawQuery(
+                "SELECT SUM(jumlah) FROM transaksi WHERE LOWER(jenis) = 'pengeluaran' AND kategori = ? AND tanggal LIKE ?",
+                new String[]{kategori, bulan + "%"}
+        );
+
+        if (cursor.moveToFirst() && !cursor.isNull(0)) {
+            total = cursor.getInt(0);
+        }
+
+        cursor.close();
+        return total;
+    }
+    public List<String> getAllKategoriFromAnggaran(String bulan) {
+        List<String> kategoriList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT DISTINCT kategori FROM anggaran_bulanan WHERE bulan = ?", new String[]{bulan});
+        if (cursor.moveToFirst()) {
+            do {
+                kategoriList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return kategoriList;
+    }
+
+
 }

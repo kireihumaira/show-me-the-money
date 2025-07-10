@@ -45,7 +45,7 @@ public class LaporanFragment extends Fragment {
         progressLingkaran = view.findViewById(R.id.progressLingkaran);
         cardAnggaranBulanan = view.findViewById(R.id.cardAnggaranBulanan);
 
-        // Navigasi ke Statistik
+        // Navigasi
         cardStatistikBulanan.setOnClickListener(v -> {
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_layout, new StatistikBulananFragment());
@@ -53,7 +53,6 @@ public class LaporanFragment extends Fragment {
             transaction.commit();
         });
 
-        // Navigasi ke Anggaran Bulanan
         cardAnggaranBulanan.setOnClickListener(v -> {
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_layout, new FragmentAnggaranBulanan());
@@ -90,15 +89,28 @@ public class LaporanFragment extends Fragment {
         String bulanTahun = selectedYear + "-" + selectedMonth;
         int anggaran = db.getAnggaranByBulan(bulanTahun);
         int pengeluaran = db.getTotalByJenisAndBulan("pengeluaran", bulanTahun);
-        int tersisa = anggaran - pengeluaran;
+        int sisa = anggaran - pengeluaran;
 
-        tvTersisaPersen.setText("Tersisa : " + formatRupiah(tersisa));
-        tvAnggaran.setText("Anggaran : " + formatRupiah(anggaran));
-        tvPengeluaran.setText("Pengeluaran : " + formatRupiah(pengeluaran));
+        tvAnggaran.setText(formatRupiah(anggaran));
+        tvPengeluaran.setText(formatRupiah(pengeluaran));
 
-        int persenTersisa = anggaran > 0 ? (int) ((tersisa * 100.0f) / anggaran) : 0;
-        if (persenTersisa < 0) persenTersisa = 0;
-        progressLingkaran.setProgress(persenTersisa);
+        if (anggaran <= 0) {
+            tvTersisaPersen.setText("Belum ada anggaran");
+            progressLingkaran.setProgress(0); // default merah
+        } else {
+            // Tampilkan nominal tersisa walau minus
+            int selisih = anggaran - pengeluaran;
+            tvTersisaPersen.setText(formatRupiah(selisih));
+
+            // Tentukan progress bar (jika melebihi, beri progress -1)
+            if (pengeluaran > anggaran) {
+                progressLingkaran.setProgress(-1); // warna abu atau merah
+            } else {
+                int persenTersisa = (int) ((selisih * 100.0f) / anggaran);
+                progressLingkaran.setProgress(persenTersisa);
+            }
+        }
+
     }
 
     private String formatRupiah(int nominal) {
